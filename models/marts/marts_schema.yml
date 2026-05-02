@@ -1,0 +1,50 @@
+
+version: 2
+
+models:
+    - name: fact_fr_carburant
+      description: "fact table used for analyses, granularity to stations and fuel available, e.q to 1 line per station and fuel -- around 30k lines"
+      tests:
+          - unique:
+              arguments:
+                column_name: "(id_station || '-' || carburant)"
+      columns:
+          - name: id_station
+            description: "combined with carburant to be primary key"
+            tests:
+                - not_null
+          - name : diff_date_maj
+            description: " difference in days between current date and last updated date"
+          - name : prix_moyen_global
+            description: "average price of fuel type in departement"
+          - name : carburant
+            description: "combined with id_station to be primary key, define type of carburant/fuel (gazole, petrol)"
+            tests:
+                - not_null
+                - accepted_values:
+                    arguments :
+                      values: ['Gazole', 'E10', 'SP95', 'SP98']
+
+    - name: dim_fr_communes_light
+      description: "dimension table used for analyses, granularity to ville (city), e.q to 1 line per city with id : code_insee, take care to city name clone"
+      columns:
+          - name: code_insee
+            description: "unique administration city id for a city"
+            tests:
+              - unique
+              - not_null
+
+exposures:
+  - name: AJD_PRIX_CARBURANT_FR
+    owner: 
+      name: Florent SOCRATE
+      email : florent.socrate@hotmail.fr
+    type: dashboard
+    url: https://datastudio.google.com/s/jOSNVRlXCYY
+    description: "dashboard as a product app to help users to find the best station to refuel"
+    depends_on:
+      - ref('fact_fr_carburant')
+      - ref('dim_fr_communes_light')
+      - ref('fr_carbu_craponne')
+              
+            
