@@ -1,0 +1,58 @@
+
+version: 2
+
+models:
+    - name: stg_raw_data_fr_carburant__fuel_api_prices_raw
+      description: "cleaned and casted table from raw data with stations service and fuel information, granularity to id_station, one line per station, around 9-10k station in france"
+      columns:
+          - name: id_station
+            description: "The primary key for this table"
+            tests:
+                - unique
+                - not_null
+          - name: latitude
+            description: "latitude ref of the station, lattiude where jittered to avoid GPS mixing between close station"
+          - name: longitude
+            description: "longitude ref of the station"
+          - name: ville
+            description: "city of the station, some city have the same name in france, especially name which contain Saint or Sainte"
+          - name: adresse
+            description: "full adress of the station, number and name of the street, city and postal code combine -- around 30 stations have the same adress"
+          - name: code_postal
+            description: "postal code, some city share the same code"
+          - name: gazole_prix
+            description: "fuel price in € per liter"
+          - name: gazole_maj
+            description: "last day and hour when the price changed"
+          - name: e10_prix
+            description: "fuel price in € per liter"
+          - name: e10_maj
+            description: "last day and hour when the price changed"
+          - name: sp95_prix
+            description: "fuel price in € per liter"
+          - name: sp95_maj
+            description: "last day and hour when the price changed"
+          - name: sp98_prix
+            description: "fuel price in € per liter"
+          - name: sp98_maj
+            description: "last day and hour when the price changed"
+          - name: carburants_disponibles
+            description: "json string of fuel available in the station"
+          - name: tableau_carburants
+            description: "array of column carburants_disponibles"
+          - name: latlong
+            description: "latitude and longitude combine with format CONCAT('lat', ',', 'long'), usefull for maps graph in dashboard tool -- around 3 stations in france have the same latlong"
+
+    - name: stg_raw_data_fr_carburant__dim_communes_large
+      description: "large model for french cities informations, name, groups, population, size, gps..."
+      columns:
+          - name: id_ligne
+            description: "The primary key for this table, num the lines"
+            tests:
+                - unique
+                - not_null
+          - name: code_insee
+            description: "unique administration city id for a city"
+            tests:
+                - unique
+                - not_null

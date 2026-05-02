@@ -1,0 +1,21 @@
+sources:
+  - name: raw_data_fr_carburant
+    database: my-project-florent-bq  
+    schema: raw_data_fr_carburant  
+    tables:
+      - name: fuel_api_prices_raw
+        description: raw data from data.gouv with fuel data from all station service
+        config: 
+          freshness:
+              warn_after:
+                count: 1
+                period: day
+              error_after: 
+                count: 2
+                period: day
+          loaded_at_query: 
+                SELECT
+                  MAX(CAST(NULLIF(gazole_maj, 'None') AS TIMESTAMP))
+                FROM {{this}}
+      - name: dim_communes_large
+        description: raw data from csv with detail information from all french cities
